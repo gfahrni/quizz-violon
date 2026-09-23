@@ -19,9 +19,10 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
   4. Elle répond en tapant une des **touches de notes** (Do à Si, seules les notes
      existantes dans `notes.json` sont affichées).
   5. **1re réponse juste** → **+1 point**.
-     **1re réponse fausse** → **2e chance** ; si la 2e est juste → **+0,5 point**.
+     **1re réponse fausse** → **2e chance** (**+5 s de bonus au chrono**) ; si la 2e
+     est juste → **+0,5 point**.
      Fausse aux deux, ou **temps écoulé (10 s)** sans réponse juste → **0 point**.
-     *(Validé : le chrono de 10 s couvre toute la note, 2e chance incluse.)*
+     *(Le chrono couvre toute la note, 2e chance incluse.)*
   6. Fin d'essai → **pause silencieuse de 2 s** → essai suivant.
 - **Score / compteur** : étoiles qui se remplissent (5 étoiles, demi-étoile possible)
   + compteur de la forme **`points / essais_max`**.
@@ -93,7 +94,8 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 
 ## Décisions prises
 1. **Plage** : G3 → E5 (octave normale = octave 4). **Validé.**
-2. **2e chance / chrono** : le chrono de 10 s couvre toute la note, 2e chance incluse. **Validé.**
+2. **2e chance / chrono** : le chrono de 10 s couvre toute la note, 2e chance incluse ;
+   la 2e chance ajoute **+5 s** au chrono. **Validé.**
 3. **Réécoute** : maintenir « Réécouter » ne remet pas les 10 s à zéro. **Validé.**
 4. **Audio** : **VSCO 2 Community Edition (CC0)**. **Validé.**
 5. Octave ignorée : la réponse est la **classe** (Do, Do#...), pas l'octave.

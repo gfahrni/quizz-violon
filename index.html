@@ -60,6 +60,7 @@ var ESSAIS_MIN = 10;    // pas de victoire avant ce nombre d'essais
 var ESSAIS_MAX = 20;    // au dela, defaite si pas gagne
 var NOTE_MS = 3000;     // duree d'ecoute automatique d'une note
 var TIMER_MS = 10000;   // chrono par note (2e chance incluse)
+var BONUS_2E_MS = 5000; // temps bonus offert en entrant dans la 2e chance
 var PAUSE_MS = 2000;    // silence entre deux notes
 var LS = 'violon-v1-';
 
@@ -309,9 +310,11 @@ function onAnswer(classe, btn) {
     setTimeout(endNote, 700);
   } else if (state.tries === 0) {
     state.tries = 1;
+    timerEnd += BONUS_2E_MS;
+    tickChrono();
     btn.className = 'touche faux';
     btn.disabled = true;
-    setFeedback('Presque ! Tu as encore une chance.', 'non');
+    setFeedback('Presque ! +5 secondes pour réessayer.', 'non');
   } else {
     state.accept = false;
     stopChrono();
