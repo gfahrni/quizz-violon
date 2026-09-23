@@ -1,0 +1,12 @@
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+Thumbs.db
+desktop.ini
+*.tmp
+*.log
+__pycache__/
+*.pyc
+# Sources audio brutes (wav VSCO) : telechargees par generer-notes.py, non versionnees
+audio-src/

@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Quizz violon">
+<meta name="theme-color" content="#c2255c">
+<title>Quizz violon 🎻</title>
+<link rel="stylesheet" href="violon-v1.css">
+</head>
+<body>
+<div id="app">
+
+  <section class="screen on" id="ecran-accueil">
+    <div class="accueil-box">
+      <div class="violon">🎻</div>
+      <h1>Quizz violon</h1>
+      <p>Écoute la note et trouve son nom.</p>
+      <button id="btn-reprendre" class="btn-principal secondaire" hidden>Reprendre la partie</button>
+      <button id="btn-nouvelle" class="btn-principal">Nouvelle partie</button>
+    </div>
+  </section>
+
+  <section class="screen" id="ecran-jeu">
+    <header class="hud">
+      <div class="etoiles" id="etoiles"></div>
+      <div class="hud-droite">
+        <span class="compteur" id="compteur">0/10</span>
+        <span class="chrono" id="chrono">10</span>
+      </div>
+    </header>
+    <main class="scene">
+      <div class="violon-note" id="violon-note">🎻</div>
+      <div class="feedback" id="feedback"></div>
+      <button id="btn-reecouter" class="btn-reecouter" type="button">🔁 Réécouter<br><small>maintiens appuyé</small></button>
+    </main>
+    <footer class="reponses" id="reponses"></footer>
+  </section>
+
+  <section class="screen" id="ecran-fin">
+    <div class="fin-box">
+      <div class="fin-emoji" id="fin-emoji"></div>
+      <h1 id="fin-titre"></h1>
+      <div class="etoiles" id="fin-etoiles"></div>
+      <p id="fin-detail"></p>
+      <button id="btn-rejouer" class="btn-principal">Rejouer</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Regles / constantes
+// ---------------------------------------------------------------------------
+var CIBLE = 5;          // points pour gagner
+var ESSAIS_MIN = 10;    // pas de victoire avant ce nombre d'essais
+var ESSAIS_MAX = 20;    // au dela, defaite si pas gagne
+var NOTE_MS = 3000;     // duree d'ecoute automatique d'une note
+var TIMER_MS = 10000;   // chrono par note (2e chance incluse)
+var PAUSE_MS = 2000;    // silence entre deux notes
+var LS = 'violon-v1-';
+
+// Ordre d'affichage des touches, de Do a Si (diese autorises inclus).
+var CLASS_ORDER = ['C', 'C#', 'D', 'E', 'F', 'F#', 'G', 'A', 'B'];
+var CLASS_LABEL = { C: 'Do', 'C#': 'Do#', D: 'Ré', E: 'Mi', F: 'Fa', 'F#': 'Fa#', G: 'Sol', A: 'La', B: 'Si' };
+
+// Fallback si notes.json n'est pas lisible (ex: ouverture directe en file://).
+var NOTES = [
+  { "id": "G3",  "nom": "Sol", "classe": "G",  "octave": 3, "freq": 196.00, "fichier": "audio/G3.mp3" },
+  { "id": "A3",  "nom": "La",  "classe": "A",  "octave": 3, "freq": 220.00, "fichier": "audio/A3.mp3" },
+  { "id": "B3",  "nom": "Si",  "classe": "B",  "octave": 3, "freq": 246.94, "fichier": "audio/B3.mp3" },
+  { "id": "C4",  "nom": "Do",  "classe": "C",  "octave": 4, "freq": 261.63, "fichier": "audio/C4.mp3" },
+  { "id": "C#4", "nom": "Do#", "classe": "C#", "octave": 4, "freq": 277.18, "fichier": "audio/Cs4.mp3" },
+  { "id": "D4",  "nom": "Ré",  "classe": "D",  "octave": 4, "freq": 293.66, "fichier": "audio/D4.mp3" },
+  { "id": "E4",  "nom": "Mi",  "classe": "E",  "octave": 4, "freq": 329.63, "fichier": "audio/E4.mp3" },
+  { "id": "F4",  "nom": "Fa",  "classe": "F",  "octave": 4, "freq": 349.23, "fichier": "audio/F4.mp3" },
+  { "id": "F#4", "nom": "Fa#", "classe": "F#", "octave": 4, "freq": 369.99, "fichier": "audio/Fs4.mp3" },
+  { "id": "G4",  "nom": "Sol", "classe": "G",  "octave": 4, "freq": 392.00, "fichier": "audio/G4.mp3" },
+  { "id": "A4",  "nom": "La",  "classe": "A",  "octave": 4, "freq": 440.00, "fichier": "audio/A4.mp3" },
+  { "id": "B4",  "nom": "Si",  "classe": "B",  "octave": 4, "freq": 493.88, "fichier": "audio/B4.mp3" },
+  { "id": "C5",  "nom": "Do",  "classe": "C",  "octave": 5, "freq": 523.25, "fichier": "audio/C5.mp3" },
+  { "id": "C#5", "nom": "Do#", "classe": "C#", "octave": 5, "freq": 554.37, "fichier": "audio/Cs5.mp3" },
+  { "id": "D5",  "nom": "Ré",  "classe": "D",  "octave": 5, "freq": 587.33, "fichier": "audio/D5.mp3" },
+  { "id": "E5",  "nom": "Mi",  "classe": "E",  "octave": 5, "freq": 659.25, "fichier": "audio/E5.mp3" }
+];
+
+// ---------------------------------------------------------------------------
+// Etat
+// ---------------------------------------------------------------------------
+var state = { phase: 'accueil', attempt: 0, score: 0, tries: 0, current: null, lastId: null, accept: false };
+
+var audio = null;
+var timerId = null;
+var timerEnd = 0;
+var stopAudioId = null;
+
+// ---------------------------------------------------------------------------
+// DOM
+// ---------------------------------------------------------------------------
+function $(id) { return document.getElementById(id); }
+var accueilEl, jeuEl, finEl, etoilesEl, compteurEl, chronoEl, violonEl, feedbackEl,
+    reecouterEl, reponsesEl, finEmojiEl, finTitreEl, finDetailEl, finEtoilesEl;
+
+// ---------------------------------------------------------------------------
+// localStorage (avec repli memoire si indisponible)
+// ---------------------------------------------------------------------------
+var mem = {};
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return mem[k] || null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { mem[k] = v; } }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) { delete mem[k]; } }
+
+function saveGame() {
+  lsSet(LS + 'game', JSON.stringify({
+    phase: state.phase, attempt: state.attempt, score: state.score, lastId: state.lastId
+  }));
+}
+function loadGame() {
+  try { return JSON.parse(lsGet(LS + 'game')); } catch (e) { return null; }
+}
+function clearGame() { lsDel(LS + 'game'); }
+
+// ---------------------------------------------------------------------------
+// Divers
+// ---------------------------------------------------------------------------
+function noteById(id) {
+  for (var i = 0; i < NOTES.length; i++) { if (NOTES[i].id === id) { return NOTES[i]; } }
+  return NOTES[0];
+}
+function formatScore(n) { return (Math.round(n * 2) / 2).toString().replace('.', ','); }
+function setFeedback(txt, cls) {
+  feedbackEl.textContent = txt || '';
+  feedbackEl.className = 'feedback' + (cls ? ' ' + cls : '');
+}
+function animateNote() {
+  violonEl.classList.remove('joue');
+  void violonEl.offsetWidth; // relance l'animation
+  violonEl.classList.add('joue');
+}
+
+// ---------------------------------------------------------------------------
+// Etoiles
+// ---------------------------------------------------------------------------
+function makeStars(container, score) {
+  container.innerHTML = '';
+  for (var i = 0; i < CIBLE; i++) {
+    var star = document.createElement('span');
+    star.className = 'star';
+    var fill = document.createElement('span');
+    fill.className = 'fill';
+    var p = score - i;
+    fill.style.width = (p >= 1 ? 100 : (p >= 0.5 ? 50 : 0)) + '%';
+    star.appendChild(fill);
+    container.appendChild(star);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Audio
+// ---------------------------------------------------------------------------
+function ensureAudio() { if (!audio) { audio = new Audio(); audio.preload = 'auto'; } return audio; }
+function playCurrent(loop) {
+  var n = state.current;
+  if (!n) { return; }
+  var a = ensureAudio();
+  a.loop = !!loop;
+  if (a.getAttribute('src') !== n.fichier) { a.src = n.fichier; }
+  try { a.currentTime = 0; } catch (e) {}
+  try { var p = a.play(); if (p && p['catch']) { p['catch'](function () {}); } } catch (e) {}
+}
+function stopSound() {
+  if (stopAudioId) { clearTimeout(stopAudioId); stopAudioId = null; }
+  if (audio) { try { audio.pause(); audio.currentTime = 0; } catch (e) {} audio.loop = false; }
+}
+
+// ---------------------------------------------------------------------------
+// Chrono
+// ---------------------------------------------------------------------------
+function startChrono() {
+  stopChrono();
+  timerEnd = Date.now() + TIMER_MS;
+  tickChrono();
+  timerId = setInterval(tickChrono, 100);
+}
+function tickChrono() {
+  var rest = timerEnd - Date.now();
+  if (rest < 0) { rest = 0; }
+  var sec = Math.ceil(rest / 1000);
+  chronoEl.textContent = sec;
+  chronoEl.className = 'chrono' + (sec <= 3 ? ' urgent' : '');
+  if (rest <= 0) { stopChrono(); onTimeout(); }
+}
+function stopChrono() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+// ---------------------------------------------------------------------------
+// HUD
+// ---------------------------------------------------------------------------
+function updateHud() {
+  makeStars(etoilesEl, state.score);
+  var denom = Math.max(ESSAIS_MIN, Math.min(state.attempt, ESSAIS_MAX));
+  compteurEl.textContent = formatScore(state.score) + '/' + denom;
+}
+
+// ---------------------------------------------------------------------------
+// Touches de reponse
+// ---------------------------------------------------------------------------
+function makeTouche(classe, label) {
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'touche';
+  b.textContent = label;
+  b.setAttribute('data-classe', classe);
+  b.addEventListener('click', function () { onAnswer(classe, b); });
+  return b;
+}
+function buildReponses() {
+  reponsesEl.innerHTML = '';
+  var present = {};
+  for (var i = 0; i < NOTES.length; i++) { present[NOTES[i].classe] = true; }
+  for (var j = 0; j < CLASS_ORDER.length; j++) {
+    var c = CLASS_ORDER[j];
+    if (present[c]) { reponsesEl.appendChild(makeTouche(c, CLASS_LABEL[c])); }
+  }
+}
+function touchesEls() { return reponsesEl.getElementsByTagName('button'); }
+function resetTouches() {
+  var b = touchesEls();
+  for (var i = 0; i < b.length; i++) { b[i].disabled = false; b[i].className = 'touche'; }
+}
+function disableAllTouches() {
+  var b = touchesEls();
+  for (var i = 0; i < b.length; i++) { b[i].disabled = true; }
+}
+function enableAllTouches() {
+  var b = touchesEls();
+  for (var i = 0; i < b.length; i++) { if (b[i].className.indexOf('faux') === -1) { b[i].disabled = false; } }
+}
+function revealCorrect() {
+  if (!state.current) { return; }
+  var b = touchesEls();
+  for (var i = 0; i < b.length; i++) {
+    if (b[i].getAttribute('data-classe') === state.current.classe) { b[i].className = 'touche juste'; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Ecrans
+// ---------------------------------------------------------------------------
+function showScreen(name) {
+  accueilEl.classList.remove('on');
+  jeuEl.classList.remove('on');
+  finEl.classList.remove('on');
+  if (name === 'accueil') { accueilEl.classList.add('on'); }
+  else if (name === 'jeu') { jeuEl.classList.add('on'); }
+  else { finEl.classList.add('on'); }
+  state.phase = name;
+}
+
+// ---------------------------------------------------------------------------
+// Deroulement d'une partie
+// ---------------------------------------------------------------------------
+function newGame() {
+  clearGame();
+  state = { phase: 'jeu', attempt: 0, score: 0, tries: 0, current: null, lastId: null, accept: false };
+  showScreen('jeu');
+  updateHud();
+  resetTouches();
+  setFeedback('');
+  nextNote();
+}
+
+function nextNote() {
+  var n = NOTES[Math.floor(Math.random() * NOTES.length)];
+  var guard = 0;
+  while (NOTES.length > 1 && n.id === state.lastId && guard < 30) {
+    n = NOTES[Math.floor(Math.random() * NOTES.length)];
+    guard++;
+  }
+  state.current = n;
+  state.lastId = n.id;
+  state.attempt++;
+  state.tries = 0;
+  state.accept = true;
+
+  resetTouches();
+  setFeedback('');
+  updateHud();
+  saveGame();
+
+  animateNote();
+  playCurrent(false);
+  stopAudioId = setTimeout(stopSound, NOTE_MS);
+  startChrono();
+}
+
+function onAnswer(classe, btn) {
+  if (!state.accept || !state.current) { return; }
+  if (classe === state.current.classe) {
+    state.accept = false;
+    stopChrono();
+    stopSound();
+    var gain = (state.tries === 0) ? 1 : 0.5;
+    state.score += gain;
+    btn.className = 'touche juste';
+    setFeedback(state.tries === 0 ? 'Bravo !' : 'Bravo ! (+½)', 'ok');
+    updateHud();
+    setTimeout(endNote, 700);
+  } else if (state.tries === 0) {
+    state.tries = 1;
+    btn.className = 'touche faux';
+    btn.disabled = true;
+    setFeedback('Presque ! Tu as encore une chance.', 'non');
+  } else {
+    state.accept = false;
+    stopChrono();
+    stopSound();
+    btn.className = 'touche faux';
+    btn.disabled = true;
+    setFeedback('Raté… c\'était ' + state.current.nom + '.', 'non');
+    revealCorrect();
+    setTimeout(endNote, 900);
+  }
+}
+
+function onTimeout() {
+  if (!state.accept || !state.current) { return; }
+  state.accept = false;
+  stopSound();
+  setFeedback('Trop tard… c\'était ' + state.current.nom + '.', 'non');
+  revealCorrect();
+  setTimeout(endNote, 900);
+}
+
+function endNote() {
+  state.accept = false;
+  state.current = null;
+  updateHud();
+
+  if (state.score >= CIBLE && state.attempt >= ESSAIS_MIN) { finish(true); return; }
+  if (state.attempt >= ESSAIS_MAX) { finish(false); return; }
+
+  setFeedback('');
+  disableAllTouches();
+  chronoEl.textContent = '';
+  chronoEl.className = 'chrono';
+  setTimeout(function () { enableAllTouches(); nextNote(); }, PAUSE_MS);
+}
+
+function finish(win) {
+  stopChrono();
+  stopSound();
+  clearGame();
+  state.accept = false;
+  showScreen('fin');
+  makeStars(finEtoilesEl, state.score);
+  if (win) {
+    finEmojiEl.textContent = '🎉';
+    finTitreEl.textContent = 'Bravo !';
+    finDetailEl.textContent = 'Tu as ' + formatScore(state.score) + ' points en ' + state.attempt + ' essais.';
+  } else {
+    finEmojiEl.textContent = '🎻';
+    finTitreEl.textContent = 'Tu as fait ' + formatScore(state.score) + ' points';
+    finDetailEl.textContent = 'En ' + state.attempt + ' essais. Réessaie pour gagner !';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reprise de la partie en cours
+// ---------------------------------------------------------------------------
+function resumeGame(g) {
+  state.phase = 'jeu';
+  state.attempt = g.attempt || 1;
+  state.score = g.score || 0;
+  state.lastId = g.lastId || null;
+  state.tries = 0;
+  state.accept = true;
+  state.current = noteById(g.lastId);
+  showScreen('jeu');
+  updateHud();
+  resetTouches();
+  setFeedback('');
+  animateNote();
+  playCurrent(false);
+  stopAudioId = setTimeout(stopSound, NOTE_MS);
+  startChrono();
+}
+
+// ---------------------------------------------------------------------------
+// Bouton « Réécouter » : maintenir = joue, relâcher = stop
+// ---------------------------------------------------------------------------
+function bindHold() {
+  var start = function (e) {
+    if (!state.current || !state.accept) { return; }
+    if (e && e.cancelable) { e.preventDefault(); }
+    if (stopAudioId) { clearTimeout(stopAudioId); stopAudioId = null; }
+    reecouterEl.classList.add('actif');
+    playCurrent(true);
+  };
+  var stop = function (e) {
+    if (e && e.cancelable) { e.preventDefault(); }
+    reecouterEl.classList.remove('actif');
+    stopSound();
+  };
+  reecouterEl.addEventListener('touchstart', start, false);
+  reecouterEl.addEventListener('touchend', stop, false);
+  reecouterEl.addEventListener('touchcancel', stop, false);
+  reecouterEl.addEventListener('mousedown', start, false);
+  reecouterEl.addEventListener('mouseup', stop, false);
+  reecouterEl.addEventListener('mouseleave', stop, false);
+  reecouterEl.addEventListener('contextmenu', function (e) { e.preventDefault(); }, false);
+}
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+function refreshFromJson() {
+  if (!window.fetch) { return; }
+  fetch('notes.json').then(function (r) { return r.json(); }).then(function (d) {
+    if (d && d.notes && d.notes.length && state.phase === 'accueil') {
+      NOTES = d.notes;
+      buildReponses();
+    }
+  })['catch'](function () {});
+}
+
+function init() {
+  accueilEl = $('ecran-accueil'); jeuEl = $('ecran-jeu'); finEl = $('ecran-fin');
+  etoilesEl = $('etoiles'); compteurEl = $('compteur'); chronoEl = $('chrono');
+  violonEl = $('violon-note'); feedbackEl = $('feedback'); reecouterEl = $('btn-reecouter');
+  reponsesEl = $('reponses'); finEmojiEl = $('fin-emoji'); finTitreEl = $('fin-titre');
+  finDetailEl = $('fin-detail'); finEtoilesEl = $('fin-etoiles');
+
+  buildReponses();
+  bindHold();
+  updateHud();
+  refreshFromJson();
+
+  var g = loadGame();
+  if (g && g.phase === 'jeu' && g.lastId) { $('btn-reprendre').hidden = false; }
+  $('btn-reprendre').addEventListener('click', function () { resumeGame(loadGame() || {}); });
+  $('btn-nouvelle').addEventListener('click', newGame);
+  $('btn-rejouer').addEventListener('click', newGame);
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { stopSound(); }
+  });
+}
+
+init();
+</script>
+</body>
+</html>
