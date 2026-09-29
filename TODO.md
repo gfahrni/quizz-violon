@@ -6,7 +6,7 @@ Cocher au fur et à mesure. Chaque item terminé = build/testé sur iPad mini 4 
 - [x] Plage de notes G3 → E5.
 - [x] Chrono pendant la 2e chance (couvre toute la note).
 - [x] Réécoute : chrono non remis à zéro.
-- [x] Compteur : plafond 20, formule `points / max(10, essai)`.
+- [x] Compteur : plafond 30, formule `points / max(10, essai)`.
 - [x] Réponse = classe de hauteur (sans octave).
 - [x] Persistance de la partie en cours.
 - [x] 5 étoiles + demi-étoiles.
@@ -33,8 +33,8 @@ Cocher au fur et à mesure. Chaque item terminé = build/testé sur iPad mini 4 
 - [x] Chrono 10 s démarré à la 1re lecture ; stop à la réponse juste / timeout.
 - [x] Score : +1 (1re juste), +0,5 (2e juste), 0 (double erreur ou timeout).
 - [x] Pause silencieuse 2 s entre deux essais.
-- [x] Compteur `points / max(10, essai)` plafonné à 20.
-- [x] Fin : victoire (`points>=5 && essais>=10`), défaite (essai 20, `points<5`).
+- [x] Compteur `points / max(10, essai)` plafonné à 30.
+- [x] Fin : victoire (`points>=10 && essais>=10`), défaite (essai 30, `points<10`).
 - [x] Bouton « Réécouter » en appui maintenu (play on hold / stop on release).
 
 ## Phase 4 — UI / écrans
@@ -57,8 +57,8 @@ Cocher au fur et à mesure. Chaque item terminé = build/testé sur iPad mini 4 
 - [ ] Hold-to-replay : joue tant qu'on appuie, stop au relâchement.
 - [ ] Chrono 10 s fiable (pas de dérive en arrière-plan).
 - [ ] Pause 2 s respectée, enchaînement des essais fluide.
-- [ ] Compteur 4/10 → 4/11 → ... → 4/20, jamais > 20.
-- [ ] Fin victoire à 5 points (min 10 essais) et fin défaite à 20 essais.
+- [ ] Compteur 4/10 → 4/11 → ... → 4/30, jamais > 30.
+- [ ] Fin victoire à 10 points (min 10 essais) et fin défaite à 30 essais.
 - [ ] Demi-étoiles / demi-points (½) affichés correctement.
 - [ ] Tester avec les doigts d'Ambre (taille des touches, lisibilité).
 

@@ -55,9 +55,10 @@
 // ---------------------------------------------------------------------------
 // Regles / constantes
 // ---------------------------------------------------------------------------
-var CIBLE = 5;          // points pour gagner
+var CIBLE = 10;         // points pour gagner
+var ETOILES = 5;        // nombre d'etoiles affichees (1 etoile = CIBLE / ETOILES points)
 var ESSAIS_MIN = 10;    // pas de victoire avant ce nombre d'essais
-var ESSAIS_MAX = 20;    // au dela, defaite si pas gagne
+var ESSAIS_MAX = 30;    // au dela, defaite si pas gagne
 var NOTE_MS = 3000;     // duree d'ecoute automatique d'une note
 var TIMER_MS = 10000;   // chrono par note (2e chance incluse)
 var BONUS_2E_MS = 5000; // temps bonus offert en entrant dans la 2e chance
@@ -146,13 +147,17 @@ function animateNote() {
 // ---------------------------------------------------------------------------
 function makeStars(container, score) {
   container.innerHTML = '';
-  for (var i = 0; i < CIBLE; i++) {
+  var sc = score * ETOILES / CIBLE;
+  for (var i = 0; i < ETOILES; i++) {
     var star = document.createElement('span');
     star.className = 'star';
     var fill = document.createElement('span');
     fill.className = 'fill';
-    var p = score - i;
-    fill.style.width = (p >= 1 ? 100 : (p >= 0.5 ? 50 : 0)) + '%';
+    var p = sc - i;
+    var w = 0;
+    if (p >= 1) { w = 100; }
+    else if (p > 0) { w = Math.round(p * 100); }
+    fill.style.width = w + '%';
     star.appendChild(fill);
     container.appendChild(star);
   }

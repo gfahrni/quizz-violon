@@ -4,7 +4,7 @@
 App **« Quizz violon »** pour **Ambre** (joue du violon) sur **iPad mini 4**
 (Safari ancien, max iPadOS 15.x).
 Jeu d'oreille : on lui joue une **note de violon**, elle doit **nommer la note**
-(Do, Ré, Mi... sans l'octave). Partie de 10 à 20 essais, objectif **5 points**.
+(Do, Ré, Mi... sans l'octave). Partie de 10 à 30 essais, objectif **10 points**.
 Thème **rose** (même palette Peach que `missions-soir` / `instruments-check`).
 Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 
@@ -24,13 +24,14 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
      Fausse aux deux, ou **temps écoulé (10 s)** sans réponse juste → **0 point**.
      *(Le chrono couvre toute la note, 2e chance incluse.)*
   6. Fin d'essai → **pause silencieuse de 2 s** → essai suivant.
-- **Score / compteur** : étoiles qui se remplissent (5 étoiles, demi-étoile possible)
+- **Score / compteur** : étoiles qui se remplissent (5 étoiles : 1 étoile = 2 points,
+  demi-étoile = 1 point, remplissage proportionnel)
   + compteur de la forme **`points / essais_max`**.
-  - `essais_max` = **max(10, numéro de l'essai en cours)**, plafonné à **20**.
-    Donc 4/10, puis 4/11 quand on démarre le 11e essai, ... jusqu'à 4/20.
+  - `essais_max` = **max(10, numéro de l'essai en cours)**, plafonné à **30**.
+    Donc 4/10, puis 4/11 quand on démarre le 11e essai, ... jusqu'à 4/30.
 - **Fin de partie** :
-  - **Victoire** dès que `points >= 5` **et** `essais >= 10` (donc pas avant 10 essais).
-  - **Défaite** si après **20 essais** `points < 5`.
+  - **Victoire** dès que `points >= 10` **et** `essais >= 10` (donc pas avant 10 essais).
+  - **Défaite** si après **30 essais** `points < 10`.
   - Écran **« Bravo »** (+ étoiles) avec bouton **« Rejouer »**.
   - Écran défaite : **« Tu as fait X points »** avec bouton **« Rejouer »**.
 
@@ -100,9 +101,9 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 4. **Audio** : **VSCO 2 Community Edition (CC0)**. **Validé.**
 5. Octave ignorée : la réponse est la **classe** (Do, Do#...), pas l'octave.
 6. Persistance : la partie en cours est sauvegardée et reprise via « Reprendre la partie ».
-7. Étoiles : 5 étoiles, demi-étoile pour 0,5 point.
-8. Plafond d'essais : 20 ; compteur = `points / max(10, essai)`.
+7. Étoiles : 5 étoiles, 1 étoile = 2 points, demi-étoile = 1 point.
+8. Plafond d'essais : 30 ; compteur = `points / max(10, essai)`.
 
 ## Tests
 - Logique de jeu validée par harnais Node (DOM/audio/timers simulés) : 26 cas OK
-  (victoire à 10 essais, défaite à 20, demi-points, timeouts, compteur /11, persistance).
+  (victoire à 10 essais, défaite à 30, demi-points, timeouts, compteur /11, persistance).
