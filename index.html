@@ -71,28 +71,32 @@ var CLASS_LABEL = { C: 'Do', 'C#': 'Do#', D: 'Ré', E: 'Mi', F: 'Fa', 'F#': 'Fa#
 
 // Fallback si notes.json n'est pas lisible (ex: ouverture directe en file://).
 var NOTES = [
-  { "id": "G3",  "nom": "Sol", "classe": "G",  "octave": 3, "freq": 196.00, "fichier": "audio/G3.mp3" },
-  { "id": "A3",  "nom": "La",  "classe": "A",  "octave": 3, "freq": 220.00, "fichier": "audio/A3.mp3" },
-  { "id": "B3",  "nom": "Si",  "classe": "B",  "octave": 3, "freq": 246.94, "fichier": "audio/B3.mp3" },
-  { "id": "C4",  "nom": "Do",  "classe": "C",  "octave": 4, "freq": 261.63, "fichier": "audio/C4.mp3" },
-  { "id": "C#4", "nom": "Do#", "classe": "C#", "octave": 4, "freq": 277.18, "fichier": "audio/Cs4.mp3" },
-  { "id": "D4",  "nom": "Ré",  "classe": "D",  "octave": 4, "freq": 293.66, "fichier": "audio/D4.mp3" },
-  { "id": "E4",  "nom": "Mi",  "classe": "E",  "octave": 4, "freq": 329.63, "fichier": "audio/E4.mp3" },
-  { "id": "F4",  "nom": "Fa",  "classe": "F",  "octave": 4, "freq": 349.23, "fichier": "audio/F4.mp3" },
-  { "id": "F#4", "nom": "Fa#", "classe": "F#", "octave": 4, "freq": 369.99, "fichier": "audio/Fs4.mp3" },
-  { "id": "G4",  "nom": "Sol", "classe": "G",  "octave": 4, "freq": 392.00, "fichier": "audio/G4.mp3" },
-  { "id": "A4",  "nom": "La",  "classe": "A",  "octave": 4, "freq": 440.00, "fichier": "audio/A4.mp3" },
-  { "id": "B4",  "nom": "Si",  "classe": "B",  "octave": 4, "freq": 493.88, "fichier": "audio/B4.mp3" },
-  { "id": "C5",  "nom": "Do",  "classe": "C",  "octave": 5, "freq": 523.25, "fichier": "audio/C5.mp3" },
-  { "id": "C#5", "nom": "Do#", "classe": "C#", "octave": 5, "freq": 554.37, "fichier": "audio/Cs5.mp3" },
-  { "id": "D5",  "nom": "Ré",  "classe": "D",  "octave": 5, "freq": 587.33, "fichier": "audio/D5.mp3" },
-  { "id": "E5",  "nom": "Mi",  "classe": "E",  "octave": 5, "freq": 659.25, "fichier": "audio/E5.mp3" }
+  { "id": "G3",  "nom": "Sol", "classe": "G",  "octave": 3, "freq": 196.00, "fichiers": { "violon": "audio/violon/G3.mp3",  "piano": "audio/piano/G3.mp3" } },
+  { "id": "A3",  "nom": "La",  "classe": "A",  "octave": 3, "freq": 220.00, "fichiers": { "violon": "audio/violon/A3.mp3",  "piano": "audio/piano/A3.mp3" } },
+  { "id": "B3",  "nom": "Si",  "classe": "B",  "octave": 3, "freq": 246.94, "fichiers": { "violon": "audio/violon/B3.mp3",  "piano": "audio/piano/B3.mp3" } },
+  { "id": "C4",  "nom": "Do",  "classe": "C",  "octave": 4, "freq": 261.63, "fichiers": { "violon": "audio/violon/C4.mp3",  "piano": "audio/piano/C4.mp3" } },
+  { "id": "C#4", "nom": "Do#", "classe": "C#", "octave": 4, "freq": 277.18, "fichiers": { "violon": "audio/violon/Cs4.mp3", "piano": "audio/piano/Cs4.mp3" } },
+  { "id": "D4",  "nom": "Ré", "classe": "D",  "octave": 4, "freq": 293.66, "fichiers": { "violon": "audio/violon/D4.mp3",  "piano": "audio/piano/D4.mp3" } },
+  { "id": "E4",  "nom": "Mi",  "classe": "E",  "octave": 4, "freq": 329.63, "fichiers": { "violon": "audio/violon/E4.mp3",  "piano": "audio/piano/E4.mp3" } },
+  { "id": "F4",  "nom": "Fa",  "classe": "F",  "octave": 4, "freq": 349.23, "fichiers": { "violon": "audio/violon/F4.mp3",  "piano": "audio/piano/F4.mp3" } },
+  { "id": "F#4", "nom": "Fa#", "classe": "F#", "octave": 4, "freq": 369.99, "fichiers": { "violon": "audio/violon/Fs4.mp3", "piano": "audio/piano/Fs4.mp3" } },
+  { "id": "G4",  "nom": "Sol", "classe": "G",  "octave": 4, "freq": 392.00, "fichiers": { "violon": "audio/violon/G4.mp3",  "piano": "audio/piano/G4.mp3" } },
+  { "id": "A4",  "nom": "La",  "classe": "A",  "octave": 4, "freq": 440.00, "fichiers": { "violon": "audio/violon/A4.mp3",  "piano": "audio/piano/A4.mp3" } },
+  { "id": "B4",  "nom": "Si",  "classe": "B",  "octave": 4, "freq": 493.88, "fichiers": { "violon": "audio/violon/B4.mp3",  "piano": "audio/piano/B4.mp3" } },
+  { "id": "C5",  "nom": "Do",  "classe": "C",  "octave": 5, "freq": 523.25, "fichiers": { "violon": "audio/violon/C5.mp3",  "piano": "audio/piano/C5.mp3" } },
+  { "id": "C#5", "nom": "Do#", "classe": "C#", "octave": 5, "freq": 554.37, "fichiers": { "violon": "audio/violon/Cs5.mp3", "piano": "audio/piano/Cs5.mp3" } },
+  { "id": "D5",  "nom": "Ré", "classe": "D",  "octave": 5, "freq": 587.33, "fichiers": { "violon": "audio/violon/D5.mp3",  "piano": "audio/piano/D5.mp3" } },
+  { "id": "E5",  "nom": "Mi",  "classe": "E",  "octave": 5, "freq": 659.25, "fichiers": { "violon": "audio/violon/E5.mp3",  "piano": "audio/piano/E5.mp3" } }
 ];
+
+// Instruments joues, tires au hasard a chaque essai (liste surchargee par notes.json).
+var INSTRUMENTS = ['violon', 'piano'];
+var ICONE = { violon: '🎻', piano: '🎹' };
 
 // ---------------------------------------------------------------------------
 // Etat
 // ---------------------------------------------------------------------------
-var state = { phase: 'accueil', attempt: 0, score: 0, tries: 0, current: null, lastId: null, accept: false };
+var state = { phase: 'accueil', attempt: 0, score: 0, tries: 0, current: null, lastId: null, instrument: 'violon', accept: false };
 
 var audio = null;
 var timerId = null;
@@ -116,7 +120,8 @@ function lsDel(k) { try { localStorage.removeItem(k); } catch (e) { delete mem[k
 
 function saveGame() {
   lsSet(LS + 'game', JSON.stringify({
-    phase: state.phase, attempt: state.attempt, score: state.score, lastId: state.lastId
+    phase: state.phase, attempt: state.attempt, score: state.score,
+    lastId: state.lastId, instrument: state.instrument
   }));
 }
 function loadGame() {
@@ -131,6 +136,15 @@ function noteById(id) {
   for (var i = 0; i < NOTES.length; i++) { if (NOTES[i].id === id) { return NOTES[i]; } }
   return NOTES[0];
 }
+// Instrument joue cet essai (au hasard), et fichier audio correspondant a l'essai.
+function pickInstrument() {
+  return INSTRUMENTS[Math.floor(Math.random() * INSTRUMENTS.length)];
+}
+function fileFor(note) {
+  var f = note.fichiers && note.fichiers[state.instrument];
+  return f || (note.fichiers && note.fichiers[INSTRUMENTS[0]]) || note.fichier || '';
+}
+function updateIcone() { violonEl.textContent = ICONE[state.instrument] || ICONE.violon; }
 function formatScore(n) { return (Math.round(n * 2) / 2).toString().replace('.', ','); }
 function setFeedback(txt, cls) {
   feedbackEl.textContent = txt || '';
@@ -171,8 +185,9 @@ function playCurrent(loop) {
   var n = state.current;
   if (!n) { return; }
   var a = ensureAudio();
+  var fichier = fileFor(n);
   a.loop = !!loop;
-  if (a.getAttribute('src') !== n.fichier) { a.src = n.fichier; }
+  if (a.getAttribute('src') !== fichier) { a.src = fichier; }
   try { a.currentTime = 0; } catch (e) {}
   try { var p = a.play(); if (p && p['catch']) { p['catch'](function () {}); } } catch (e) {}
 }
@@ -269,7 +284,7 @@ function showScreen(name) {
 // ---------------------------------------------------------------------------
 function newGame() {
   clearGame();
-  state = { phase: 'jeu', attempt: 0, score: 0, tries: 0, current: null, lastId: null, accept: false };
+  state = { phase: 'jeu', attempt: 0, score: 0, tries: 0, current: null, lastId: null, instrument: 'violon', accept: false };
   showScreen('jeu');
   updateHud();
   resetTouches();
@@ -278,6 +293,7 @@ function newGame() {
 }
 
 function nextNote() {
+  state.instrument = pickInstrument();
   var n = NOTES[Math.floor(Math.random() * NOTES.length)];
   var guard = 0;
   while (NOTES.length > 1 && n.id === state.lastId && guard < 30) {
@@ -295,6 +311,7 @@ function nextNote() {
   updateHud();
   saveGame();
 
+  updateIcone();
   animateNote();
   playCurrent(false);
   stopAudioId = setTimeout(stopSound, NOTE_MS);
@@ -382,6 +399,7 @@ function resumeGame(g) {
   state.attempt = g.attempt || 1;
   state.score = g.score || 0;
   state.lastId = g.lastId || null;
+  state.instrument = g.instrument || 'violon';
   state.tries = 0;
   state.accept = true;
   state.current = noteById(g.lastId);
@@ -389,6 +407,7 @@ function resumeGame(g) {
   updateHud();
   resetTouches();
   setFeedback('');
+  updateIcone();
   animateNote();
   playCurrent(false);
   stopAudioId = setTimeout(stopSound, NOTE_MS);
@@ -428,6 +447,7 @@ function refreshFromJson() {
   fetch('notes.json').then(function (r) { return r.json(); }).then(function (d) {
     if (d && d.notes && d.notes.length && state.phase === 'accueil') {
       NOTES = d.notes;
+      if (d.instruments && d.instruments.length) { INSTRUMENTS = d.instruments; }
       buildReponses();
     }
   })['catch'](function () {});

@@ -1,23 +1,193 @@
 {
-  "version": 1,
-  "plage": { "de": "G3", "a": "E5" },
-  "dieseAutorises": ["C#", "F#"],
+  "version": 2,
+  "plage": {
+    "de": "G3",
+    "a": "E5"
+  },
+  "dieseAutorises": [
+    "C#",
+    "F#"
+  ],
+  "instruments": [
+    "violon",
+    "piano"
+  ],
   "notes": [
-    { "id": "G3",  "nom": "Sol", "classe": "G",  "octave": 3, "freq": 196.00, "fichier": "audio/G3.mp3" },
-    { "id": "A3",  "nom": "La",  "classe": "A",  "octave": 3, "freq": 220.00, "fichier": "audio/A3.mp3" },
-    { "id": "B3",  "nom": "Si",  "classe": "B",  "octave": 3, "freq": 246.94, "fichier": "audio/B3.mp3" },
-    { "id": "C4",  "nom": "Do",  "classe": "C",  "octave": 4, "freq": 261.63, "fichier": "audio/C4.mp3" },
-    { "id": "C#4", "nom": "Do#", "classe": "C#", "octave": 4, "freq": 277.18, "fichier": "audio/Cs4.mp3" },
-    { "id": "D4",  "nom": "Ré",  "classe": "D",  "octave": 4, "freq": 293.66, "fichier": "audio/D4.mp3" },
-    { "id": "E4",  "nom": "Mi",  "classe": "E",  "octave": 4, "freq": 329.63, "fichier": "audio/E4.mp3" },
-    { "id": "F4",  "nom": "Fa",  "classe": "F",  "octave": 4, "freq": 349.23, "fichier": "audio/F4.mp3" },
-    { "id": "F#4", "nom": "Fa#", "classe": "F#", "octave": 4, "freq": 369.99, "fichier": "audio/Fs4.mp3" },
-    { "id": "G4",  "nom": "Sol", "classe": "G",  "octave": 4, "freq": 392.00, "fichier": "audio/G4.mp3" },
-    { "id": "A4",  "nom": "La",  "classe": "A",  "octave": 4, "freq": 440.00, "fichier": "audio/A4.mp3" },
-    { "id": "B4",  "nom": "Si",  "classe": "B",  "octave": 4, "freq": 493.88, "fichier": "audio/B4.mp3" },
-    { "id": "C5",  "nom": "Do",  "classe": "C",  "octave": 5, "freq": 523.25, "fichier": "audio/C5.mp3" },
-    { "id": "C#5", "nom": "Do#", "classe": "C#", "octave": 5, "freq": 554.37, "fichier": "audio/Cs5.mp3" },
-    { "id": "D5",  "nom": "Ré",  "classe": "D",  "octave": 5, "freq": 587.33, "fichier": "audio/D5.mp3" },
-    { "id": "E5",  "nom": "Mi",  "classe": "E",  "octave": 5, "freq": 659.25, "fichier": "audio/E5.mp3" }
+    {
+      "id": "G3",
+      "nom": "Sol",
+      "classe": "G",
+      "octave": 3,
+      "freq": 196.0,
+      "fichiers": {
+        "violon": "audio/violon/G3.mp3",
+        "piano": "audio/piano/G3.mp3"
+      }
+    },
+    {
+      "id": "A3",
+      "nom": "La",
+      "classe": "A",
+      "octave": 3,
+      "freq": 220.0,
+      "fichiers": {
+        "violon": "audio/violon/A3.mp3",
+        "piano": "audio/piano/A3.mp3"
+      }
+    },
+    {
+      "id": "B3",
+      "nom": "Si",
+      "classe": "B",
+      "octave": 3,
+      "freq": 246.94,
+      "fichiers": {
+        "violon": "audio/violon/B3.mp3",
+        "piano": "audio/piano/B3.mp3"
+      }
+    },
+    {
+      "id": "C4",
+      "nom": "Do",
+      "classe": "C",
+      "octave": 4,
+      "freq": 261.63,
+      "fichiers": {
+        "violon": "audio/violon/C4.mp3",
+        "piano": "audio/piano/C4.mp3"
+      }
+    },
+    {
+      "id": "C#4",
+      "nom": "Do#",
+      "classe": "C#",
+      "octave": 4,
+      "freq": 277.18,
+      "fichiers": {
+        "violon": "audio/violon/Cs4.mp3",
+        "piano": "audio/piano/Cs4.mp3"
+      }
+    },
+    {
+      "id": "D4",
+      "nom": "Ré",
+      "classe": "D",
+      "octave": 4,
+      "freq": 293.66,
+      "fichiers": {
+        "violon": "audio/violon/D4.mp3",
+        "piano": "audio/piano/D4.mp3"
+      }
+    },
+    {
+      "id": "E4",
+      "nom": "Mi",
+      "classe": "E",
+      "octave": 4,
+      "freq": 329.63,
+      "fichiers": {
+        "violon": "audio/violon/E4.mp3",
+        "piano": "audio/piano/E4.mp3"
+      }
+    },
+    {
+      "id": "F4",
+      "nom": "Fa",
+      "classe": "F",
+      "octave": 4,
+      "freq": 349.23,
+      "fichiers": {
+        "violon": "audio/violon/F4.mp3",
+        "piano": "audio/piano/F4.mp3"
+      }
+    },
+    {
+      "id": "F#4",
+      "nom": "Fa#",
+      "classe": "F#",
+      "octave": 4,
+      "freq": 369.99,
+      "fichiers": {
+        "violon": "audio/violon/Fs4.mp3",
+        "piano": "audio/piano/Fs4.mp3"
+      }
+    },
+    {
+      "id": "G4",
+      "nom": "Sol",
+      "classe": "G",
+      "octave": 4,
+      "freq": 392.0,
+      "fichiers": {
+        "violon": "audio/violon/G4.mp3",
+        "piano": "audio/piano/G4.mp3"
+      }
+    },
+    {
+      "id": "A4",
+      "nom": "La",
+      "classe": "A",
+      "octave": 4,
+      "freq": 440.0,
+      "fichiers": {
+        "violon": "audio/violon/A4.mp3",
+        "piano": "audio/piano/A4.mp3"
+      }
+    },
+    {
+      "id": "B4",
+      "nom": "Si",
+      "classe": "B",
+      "octave": 4,
+      "freq": 493.88,
+      "fichiers": {
+        "violon": "audio/violon/B4.mp3",
+        "piano": "audio/piano/B4.mp3"
+      }
+    },
+    {
+      "id": "C5",
+      "nom": "Do",
+      "classe": "C",
+      "octave": 5,
+      "freq": 523.25,
+      "fichiers": {
+        "violon": "audio/violon/C5.mp3",
+        "piano": "audio/piano/C5.mp3"
+      }
+    },
+    {
+      "id": "C#5",
+      "nom": "Do#",
+      "classe": "C#",
+      "octave": 5,
+      "freq": 554.37,
+      "fichiers": {
+        "violon": "audio/violon/Cs5.mp3",
+        "piano": "audio/piano/Cs5.mp3"
+      }
+    },
+    {
+      "id": "D5",
+      "nom": "Ré",
+      "classe": "D",
+      "octave": 5,
+      "freq": 587.33,
+      "fichiers": {
+        "violon": "audio/violon/D5.mp3",
+        "piano": "audio/piano/D5.mp3"
+      }
+    },
+    {
+      "id": "E5",
+      "nom": "Mi",
+      "classe": "E",
+      "octave": 5,
+      "freq": 659.25,
+      "fichiers": {
+        "violon": "audio/violon/E5.mp3",
+        "piano": "audio/piano/E5.mp3"
+      }
+    }
   ]
 }

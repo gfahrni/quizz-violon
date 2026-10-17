@@ -16,16 +16,26 @@ Cocher au fur et à mesure. Chaque item terminé = build/testé sur iPad mini 4 
 - [x] Initialiser le repo `quizz-violon` (git sur `main`, `.gitignore`).
 - [x] Créer `index.html` (3 écrans : accueil / jeu / fin, meta iOS).
 - [x] Créer `violon-v1.css` (thème rose Peach, étoiles, touches).
-- [x] Créer `notes.json` (16 notes : id, nom, classe, octave, fréquence, fichier).
+- [x] Créer `notes.json` (16 notes : id, nom, classe, octave, fréquence, `fichiers`
+      par instrument).
 - [x] Fallback en dur des notes dans le JS si le fetch échoue.
 
 ## Phase 2 — Audio (VSCO 2 CE → fichiers locaux)
 - [x] Choisir la source : VSCO 2 CE (CC0), violon solo `Arco Vib`.
 - [x] Écrire `generer-notes.py` (télécharge 8 bases + ré-échantillonne → mp3).
-- [x] Générer les 16 notes (G3 ... E5).
+- [x] Générer les 16 notes de violon (G3 ... E5).
 - [x] Vérifier la justesse (toutes < 25 cents de la fréquence attendue).
 - [x] Vérifier durée ~3 s et format mono 128 kbps.
 - [x] Origine + licence documentées dans `AGENTS.md`.
+
+## Phase 2bis — Piano (instrument aléatoire)
+- [x] Décision : violon ou piano tiré au hasard à chaque essai (50/50), affiché.
+- [x] Choisir la source piano : VSCO 2 CE `Keys/Upright Piano` (Ivy Audio, `dyn3`).
+- [x] Étendre `generer-notes.py` (2 instruments, sorties `audio/<instrument>/`).
+- [x] Générer les 16 notes de piano (bases tous les 4 demi-tons, décalage −1 à +2).
+- [x] Vérifier la justesse (< 15 cents) et le niveau (~-18 LUFS, comme le violon).
+- [x] `notes.json` : `instruments` + `fichiers` par instrument ; état `instrument`.
+- [x] Harnais Node : tirage, chemins, sauvegarde/reprise, repli ancien format.
 
 ## Phase 3 — Moteur de jeu (logique pure)
 - [x] Tirage aléatoire d'une note (évite la répétition immédiate).
@@ -60,6 +70,8 @@ Cocher au fur et à mesure. Chaque item terminé = build/testé sur iPad mini 4 
 - [ ] Compteur 4/10 → 4/11 → ... → 4/30, jamais > 30.
 - [ ] Fin victoire à 10 points (min 10 essais) et fin défaite à 30 essais.
 - [ ] Demi-étoiles / demi-points (½) affichés correctement.
+- [ ] Instrument aléatoire violon/piano : son correct, changement sans latence, icône 🎻/🎹.
+- [ ] Niveau du piano comparable au violon sur le haut-parleur.
 - [ ] Tester avec les doigts d'Ambre (taille des touches, lisibilité).
 
 ## Phase 7 — Finition / déploiement

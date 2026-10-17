@@ -11,19 +11,22 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 ## Règles du jeu
 - Bouton **« Nouvelle partie »** sur l'écran d'accueil.
 - Chaque essai :
-  1. Une note de violon est tirée au hasard dans la liste autorisée (`notes.json`).
-  2. La note est **jouée automatiquement 3 s**, et le **chrono de 10 s démarre**
+  1. Un **instrument** est tiré au hasard : **violon ou piano** (50/50), affiché à
+     l'écran (🎻 / 🎹).
+  2. Une note est tirée au hasard dans la liste autorisée (`notes.json`) et jouée
+     avec l'instrument tiré.
+  3. La note est **jouée automatiquement 3 s**, et le **chrono de 10 s démarre**
      dès la première lecture.
-  3. Bouton **« Réécouter »** : **appui maintenu = la note joue**, **relâchement = stop**
+  4. Bouton **« Réécouter »** : **appui maintenu = la note joue**, **relâchement = stop**
      (rejouer ne remet PAS le chrono à zéro).
-  4. Elle répond en tapant une des **touches de notes** (Do à Si, seules les notes
+  5. Elle répond en tapant une des **touches de notes** (Do à Si, seules les notes
      existantes dans `notes.json` sont affichées).
-  5. **1re réponse juste** → **+1 point**.
+  6. **1re réponse juste** → **+1 point**.
      **1re réponse fausse** → **2e chance** (**+5 s de bonus au chrono**) ; si la 2e
      est juste → **+0,5 point**.
      Fausse aux deux, ou **temps écoulé (10 s)** sans réponse juste → **0 point**.
      *(Le chrono couvre toute la note, 2e chance incluse.)*
-  6. Fin d'essai → **pause silencieuse de 2 s** → essai suivant.
+  7. Fin d'essai → **pause silencieuse de 2 s** → essai suivant.
 - **Score / compteur** : étoiles qui se remplissent (5 étoiles : 1 étoile = 2 points,
   demi-étoile = 1 point, remplissage proportionnel)
   + compteur de la forme **`points / essais_max`**.
@@ -59,20 +62,27 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
   - `index.html` : écrans + logique du jeu (JS inline, tourne en ES5).
   - `violon-v1.css` : thème rose versionné (renommer à chaque change visuel).
   - `notes.json` : **liste autorisée des notes** (id, nom FR, octave, classe,
-    fréquence, fichier audio). Fallback en dur dans le JS si fetch échoue.
-  - `audio/<id>.mp3` : une note par fichier (offline, stocké dans le repo).
-    Nom de fichier : `#` → `s` (ex. `C#4` → `Cs4.mp3`).
-  - `generer-notes.py` : script local one-shot (ffmpeg) qui télécharge 8 échantillons
-    VSCO de base (`audio-src/`, ignoré par git) et ré-échantillonne (`asetrate`) pour
-    produire les 16 mp3. Vérifie la cohérence avec `notes.json`.
+    fréquence) + `instruments` joués + `fichiers` (chemin audio par instrument).
+    Fallback en dur dans le JS si fetch échoue.
+  - `audio/violon/<id>.mp3` et `audio/piano/<id>.mp3` : une note par fichier et par
+    instrument (offline, stocké dans le repo). Nom de fichier : `#` → `s`
+    (ex. `C#4` → `Cs4.mp3`).
+  - `generer-notes.py` : script local one-shot (ffmpeg) qui télécharge les échantillons
+    VSCO de base (`audio-src/<instrument>/`, ignoré par git) et ré-échantillonne
+    (`asetrate`) pour produire les 32 mp3 (16 violon + 16 piano). Vérifie la cohérence
+    avec `notes.json`.
 - État de partie en `localStorage` sous préfixe `violon-v1-` (`violon-v1-game`).
 
 ## Audio — source libre
-- Besoin : **une note de violon tenue par hauteur** (16 fichiers), idéalement **CC0**.
-- **Décision : VSCO 2 Community Edition** (CC0-1.0, `github.com/sgossner/VSCO-2-CE`,
-  dossier `Strings/Solo Violin/Arco Vib`). Bases `_f` : G3, A3, C4, E4, G4, A4, C5, E5.
-  Les autres notes sont obtenues par décalage de +1/+2 demi-tons (ré-échantillonnage).
-- Sortie visée : mp3 mono ~96–128 kbps, normalisés, courts (~2-3 s), commités dans `audio/`.
+- Besoin : **une note tenue par hauteur et par instrument** (16 × 2 fichiers),
+  idéalement **CC0**.
+- **Décision : VSCO 2 Community Edition** (CC0-1.0, `github.com/sgossner/VSCO-2-CE`).
+  - **Violon** : `Strings/Solo Violin/Arco Vib`, bases `_f` : G3, A3, C4, E4, G4, A4,
+    C5, E5. Les autres notes sont obtenues par décalage de +1/+2 demi-tons.
+  - **Piano** : `Keys/Upright Piano` (Ivy Audio, `dyn3`), bases tous les 4 demi-tons :
+    F3, A3, C#4, F4, A4, C#5, F5. Décalage de −1 à +2 demi-tons.
+- Sortie visée : mp3 mono ~96–128 kbps, normalisés, courts (~3 s), commités dans
+  `audio/violon/` et `audio/piano/`.
 - **Note** : les échantillons de l'Université d'Iowa sont des **gammes glissées**
   (ex. `G3B3`), pas des notes isolées → non retenus tels quels.
 
@@ -103,7 +113,11 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 6. Persistance : la partie en cours est sauvegardée et reprise via « Reprendre la partie ».
 7. Étoiles : 5 étoiles, 1 étoile = 2 points, demi-étoile = 1 point.
 8. Plafond d'essais : 30 ; compteur = `points / max(10, essai)`.
+9. **Instrument** : violon ou piano tiré au hasard à chaque essai (50/50), affiché
+   à l'écran (🎻/🎹) ; l'instrument de l'essai en cours est sauvegardé pour la reprise.
 
 ## Tests
 - Logique de jeu validée par harnais Node (DOM/audio/timers simulés) : 26 cas OK
   (victoire à 10 essais, défaite à 30, demi-points, timeouts, compteur /11, persistance).
+- Instrument : 11 cas OK (tirage 50/50 sur 2000 essais, chemin `audio/<instrument>/`,
+  sauvegarde/reprise de l'instrument, repli violon sur ancienne sauvegarde, icône).

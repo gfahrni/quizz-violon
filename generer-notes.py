@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
-"""Genere les notes de violon (audio/<id>.mp3) pour le Quizz violon.
+"""Genere les notes (audio/<instrument>/<id>.mp3) pour le Quizz violon.
 
-Source : VSCO 2 Community Edition (CC0-1.0), violon solo "Arco Vib".
-URL    : https://github.com/sgossner/VSCO-2-CE (dossier Strings/Solo Violin/Arco Vib)
+Sources : VSCO 2 Community Edition (Versilian Studios), libres d'usage.
+  - violon : Strings/Solo Violin/Arco Vib (base _f, forte)
+  - piano  : Keys/Upright Piano (Ivy Audio, base dyn3, forte)
+URL      : https://github.com/sgossner/VSCO-2-CE
 
-VSCO ne fournit que les notes Sol/Do/Mi (pas de demi-tons). On part donc de
-8 echantillons de base et on decale la hauteur par re-echantillonnage (ffmpeg
-asetrate), ce qui est la methode standard d'un sampler. Chaque note devient un
-fichier mp3 autonome, court (~3 s), mono, normalise et versionnable.
+VSCO ne fournit pas toutes les notes : on part d'echantillons de base et on
+decale la hauteur par re-echantillonnage (ffmpeg asetrate), la methode standard
+d'un sampler. Chaque note devient un fichier mp3 autonome, court (~3 s), mono,
+normalise et versionnable.
+
+Le violon est echantillonne toutes les 1-2 notes (G3 A3 C4 E4 G4 A4 C5 E5),
+le piano tous les 4 demi-tons (F3 A3 C#4 F4 A4 C#5 F5 dans notre ambitus).
+Decalage maximal applique : 2 demi-tons montants, 1/2 descendant.
 
 Usage :
     python3 generer-notes.py            # telecharge si besoin puis genere
@@ -22,37 +28,61 @@ import sys
 import urllib.request
 import urllib.parse
 
-BASE_URL = ("https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/"
-            "Strings/Solo%20Violin/Arco%20Vib/")
+VSCO = "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/"
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-SRC_DIR = os.path.join(HERE, "audio-src")
-OUT_DIR = os.path.join(HERE, "audio")
-
-# note -> (echantillon de base VSCO, demi-tons a appliquer)
-# Bases disponibles : G3 A3 C4 E4 G4 A4 C5 E5. Les autres notes sont decalees
-# de +1 ou +2 demi-tons. (Ambitus vise : G3 -> E5.)
-PLAN = {
-    "G3":  ("LLVln_ArcoVib_G3_f.wav", 0),
-    "A3":  ("LLVln_ArcoVib_A3_f.wav", 0),
-    "B3":  ("LLVln_ArcoVib_A3_f.wav", 2),
-    "C4":  ("LLVln_ArcoVib_C4_f.wav", 0),
-    "C#4": ("LLVln_ArcoVib_C4_f.wav", 1),
-    "D4":  ("LLVln_ArcoVib_C4_f.wav", 2),
-    "E4":  ("LLVln_ArcoVib_E4_f.wav", 0),
-    "F4":  ("LLVln_ArcoVib_E4_f.wav", 1),
-    "F#4": ("LLVln_ArcoVib_E4_f.wav", 2),
-    "G4":  ("LLVln_ArcoVib_G4_f.wav", 0),
-    "A4":  ("LLVln_ArcoVib_A4_f.wav", 0),
-    "B4":  ("LLVln_ArcoVib_A4_f.wav", 2),
-    "C5":  ("LLVln_ArcoVib_C5_f.wav", 0),
-    "C#5": ("LLVln_ArcoVib_C5_f.wav", 1),
-    "D5":  ("LLVln_ArcoVib_C5_f.wav", 2),
-    "E5":  ("LLVln_ArcoVib_E5_f.wav", 0),
+# Pour chaque instrument : dossier source VSCO + plan note -> (echantillon, demi-tons)
+INSTRUMENTS = {
+    "violon": {
+        "base_url": VSCO + "Strings/Solo%20Violin/Arco%20Vib/",
+        "plan": {
+            "G3":  ("LLVln_ArcoVib_G3_f.wav", 0),
+            "A3":  ("LLVln_ArcoVib_A3_f.wav", 0),
+            "B3":  ("LLVln_ArcoVib_A3_f.wav", 2),
+            "C4":  ("LLVln_ArcoVib_C4_f.wav", 0),
+            "C#4": ("LLVln_ArcoVib_C4_f.wav", 1),
+            "D4":  ("LLVln_ArcoVib_C4_f.wav", 2),
+            "E4":  ("LLVln_ArcoVib_E4_f.wav", 0),
+            "F4":  ("LLVln_ArcoVib_E4_f.wav", 1),
+            "F#4": ("LLVln_ArcoVib_E4_f.wav", 2),
+            "G4":  ("LLVln_ArcoVib_G4_f.wav", 0),
+            "A4":  ("LLVln_ArcoVib_A4_f.wav", 0),
+            "B4":  ("LLVln_ArcoVib_A4_f.wav", 2),
+            "C5":  ("LLVln_ArcoVib_C5_f.wav", 0),
+            "C#5": ("LLVln_ArcoVib_C5_f.wav", 1),
+            "D5":  ("LLVln_ArcoVib_C5_f.wav", 2),
+            "E5":  ("LLVln_ArcoVib_E5_f.wav", 0),
+        },
+    },
+    "piano": {
+        "base_url": VSCO + "Keys/Upright%20Piano/",
+        # Echantillons tous les 4 demi-tons : suffixe = (numero de touche - 21) / 2.
+        # F3=016 A3=018 C#4=020 F4=022 A4=024 C#5=026 F5=028.
+        "plan": {
+            "G3":  ("Player_dyn3_rr1_016.wav", 2),
+            "A3":  ("Player_dyn3_rr1_018.wav", 0),
+            "B3":  ("Player_dyn3_rr1_018.wav", 2),
+            "C4":  ("Player_dyn3_rr1_020.wav", -1),
+            "C#4": ("Player_dyn3_rr1_020.wav", 0),
+            "D4":  ("Player_dyn3_rr1_020.wav", 1),
+            "E4":  ("Player_dyn3_rr1_022.wav", -1),
+            "F4":  ("Player_dyn3_rr1_022.wav", 0),
+            "F#4": ("Player_dyn3_rr1_022.wav", 1),
+            "G4":  ("Player_dyn3_rr1_022.wav", 2),
+            "A4":  ("Player_dyn3_rr1_024.wav", 0),
+            "B4":  ("Player_dyn3_rr1_024.wav", 2),
+            "C5":  ("Player_dyn3_rr1_026.wav", -1),
+            "C#5": ("Player_dyn3_rr1_026.wav", 0),
+            "D5":  ("Player_dyn3_rr1_026.wav", 1),
+            "E5":  ("Player_dyn3_rr1_028.wav", -1),
+        },
+    },
 }
 
-# Nom de fichier mp3 (le diese devient 's' : C#4 -> Cs4).
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
 def out_name(note_id):
+    """Nom de fichier mp3 (le diese devient 's' : C#4 -> Cs4)."""
     return note_id.replace("#", "s") + ".mp3"
 
 
@@ -73,22 +103,20 @@ def sample_rate(path):
     return int(out.decode().strip())
 
 
-def download(base_file):
-    os.makedirs(SRC_DIR, exist_ok=True)
-    dest = os.path.join(SRC_DIR, base_file)
+def download(base_url, base_file, src_dir):
+    os.makedirs(src_dir, exist_ok=True)
+    dest = os.path.join(src_dir, base_file)
     if os.path.exists(dest) and os.path.getsize(dest) > 0:
         return dest
-    url = BASE_URL + urllib.parse.quote(base_file)
+    url = base_url + urllib.parse.quote(base_file)
     print("telechargement :", base_file)
     urllib.request.urlretrieve(url, dest)
     return dest
 
 
-def generate(src, note_id, semitones, force):
-    os.makedirs(OUT_DIR, exist_ok=True)
-    dest = os.path.join(OUT_DIR, out_name(note_id))
+def generate(src, dest, semitones, force):
     if os.path.exists(dest) and not force:
-        print("deja la   :", os.path.basename(dest))
+        print("deja la   :", os.path.relpath(dest, HERE))
         return
     sr = sample_rate(src)
     ratio = 2 ** (semitones / 12.0)
@@ -98,7 +126,7 @@ def generate(src, note_id, semitones, force):
         "afade=t=in:st=0:d=0.02,afade=t=out:st=2.5:d=0.5,"
         "loudnorm=I=-18:TP=-2:LRA=11"
     ).format(rate=sr, ratio=ratio)
-    print("generation:", os.path.basename(dest), "(+%d demi-tons)" % semitones)
+    print("generation:", os.path.relpath(dest, HERE), "(%+d demi-tons)" % semitones)
     run(["ffmpeg", "-y", "-loglevel", "error", "-i", src, "-af", af,
          "-ac", "1", "-ar", "44100", "-b:a", "128k", dest])
 
@@ -112,22 +140,40 @@ def main():
         if not have(tool):
             sys.exit("outil manquant : %s" % tool)
 
-    # verifie que le plan correspond bien a notes.json
+    # notes.json est la source de verite : liste des notes autorisees + instruments.
     with open(os.path.join(HERE, "notes.json"), encoding="utf-8") as f:
-        ids = [n["id"] for n in json.load(f)["notes"]]
-    missing = [i for i in ids if i not in PLAN]
-    extra = [i for i in PLAN if i not in ids]
-    if missing or extra:
-        sys.exit("ecart entre notes.json et PLAN : manquants=%s en trop=%s" % (missing, extra))
+        data = json.load(f)
+    ids = [n["id"] for n in data["notes"]]
+    instruments = data.get("instruments") or list(INSTRUMENTS)
 
-    cache = {}
-    for note_id in ids:
-        base_file, semis = PLAN[note_id]
-        if base_file not in cache:
-            cache[base_file] = download(base_file)
-        generate(cache[base_file], note_id, semis, args.force)
+    # verifie que chaque plan correspond bien a notes.json
+    for instr in instruments:
+        if instr not in INSTRUMENTS:
+            sys.exit("instrument inconnu du script : %s" % instr)
+        plan = INSTRUMENTS[instr]["plan"]
+        missing = [i for i in ids if i not in plan]
+        extra = [i for i in plan if i not in ids]
+        if missing or extra:
+            sys.exit("ecart %s entre notes.json et le plan : manquants=%s en trop=%s"
+                     % (instr, missing, extra))
 
-    print("\nOK : %d notes dans %s" % (len(ids), os.path.relpath(OUT_DIR, HERE)))
+    total = 0
+    for instr in instruments:
+        folder = INSTRUMENTS[instr]
+        src_dir = os.path.join(HERE, "audio-src", instr)
+        out_dir = os.path.join(HERE, "audio", instr)
+        os.makedirs(out_dir, exist_ok=True)
+        print("\n== %s ==" % instr)
+        cache = {}
+        for note_id in ids:
+            base_file, semis = folder["plan"][note_id]
+            if base_file not in cache:
+                cache[base_file] = download(folder["base_url"], base_file, src_dir)
+            generate(cache[base_file], os.path.join(out_dir, out_name(note_id)),
+                     semis, args.force)
+            total += 1
+
+    print("\nOK : %d notes dans audio/" % total)
 
 
 if __name__ == "__main__":
