@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Quizz violon">
 <meta name="theme-color" content="#c2255c">
-<title>Quizz violon 🎻</title>
+<title>Quizz violon 🎹</title>
 <link rel="stylesheet" href="violon-v1.css">
 </head>
 <body>
@@ -15,7 +15,7 @@
 
   <section class="screen on" id="ecran-accueil">
     <div class="accueil-box">
-      <div class="violon">🎻</div>
+      <div class="violon">🎹</div>
       <h1>Quizz violon</h1>
       <p>Écoute la note et trouve son nom.</p>
       <button id="btn-reprendre" class="btn-principal secondaire" hidden>Reprendre la partie</button>
@@ -32,7 +32,7 @@
       </div>
     </header>
     <main class="scene">
-      <div class="violon-note" id="violon-note">🎻</div>
+      <div class="violon-note" id="violon-note">🎹</div>
       <div class="feedback" id="feedback"></div>
       <button id="btn-reecouter" class="btn-reecouter" type="button">🔁 Réécouter<br><small>maintiens appuyé</small></button>
     </main>
@@ -86,17 +86,26 @@ var NOTES = [
   { "id": "C5",  "nom": "Do",  "classe": "C",  "octave": 5, "freq": 523.25, "fichiers": { "violon": "audio/violon/C5.mp3",  "piano": "audio/piano/C5.mp3" } },
   { "id": "C#5", "nom": "Do#", "classe": "C#", "octave": 5, "freq": 554.37, "fichiers": { "violon": "audio/violon/Cs5.mp3", "piano": "audio/piano/Cs5.mp3" } },
   { "id": "D5",  "nom": "Ré", "classe": "D",  "octave": 5, "freq": 587.33, "fichiers": { "violon": "audio/violon/D5.mp3",  "piano": "audio/piano/D5.mp3" } },
-  { "id": "E5",  "nom": "Mi",  "classe": "E",  "octave": 5, "freq": 659.25, "fichiers": { "violon": "audio/violon/E5.mp3",  "piano": "audio/piano/E5.mp3" } }
+  { "id": "E5",  "nom": "Mi",  "classe": "E",  "octave": 5, "freq": 659.25, "fichiers": { "violon": "audio/violon/E5.mp3",  "piano": "audio/piano/E5.mp3" } },
+  { "id": "F5",  "nom": "Fa",  "classe": "F",  "octave": 5, "freq": 698.46, "fichiers": { "piano": "audio/piano/F5.mp3" } },
+  { "id": "F#5", "nom": "Fa#", "classe": "F#", "octave": 5, "freq": 739.99, "fichiers": { "piano": "audio/piano/Fs5.mp3" } },
+  { "id": "G5",  "nom": "Sol", "classe": "G",  "octave": 5, "freq": 783.99, "fichiers": { "piano": "audio/piano/G5.mp3" } },
+  { "id": "A5",  "nom": "La",  "classe": "A",  "octave": 5, "freq": 880.00, "fichiers": { "piano": "audio/piano/A5.mp3" } },
+  { "id": "B5",  "nom": "Si",  "classe": "B",  "octave": 5, "freq": 987.77, "fichiers": { "piano": "audio/piano/B5.mp3" } },
+  { "id": "C6",  "nom": "Do",  "classe": "C",  "octave": 6, "freq": 1046.50, "fichiers": { "piano": "audio/piano/C6.mp3" } }
 ];
 
 // Instruments joues, tires au hasard a chaque essai (liste surchargee par notes.json).
-var INSTRUMENTS = ['violon', 'piano'];
+// Reglage actuel : piano seul. Le mode violon reste cable (icone, plan dans
+// generer-notes.py, audio/violon/*.mp3) : remettre "violon" dans notes.json
+// suffit a le reactiver pour les notes qui ont un fichier violon.
+var INSTRUMENTS = ['piano'];
 var ICONE = { violon: '🎻', piano: '🎹' };
 
 // ---------------------------------------------------------------------------
 // Etat
 // ---------------------------------------------------------------------------
-var state = { phase: 'accueil', attempt: 0, score: 0, tries: 0, current: null, lastId: null, instrument: 'violon', accept: false };
+var state = { phase: 'accueil', attempt: 0, score: 0, tries: 0, current: null, lastId: null, instrument: INSTRUMENTS[0], accept: false };
 
 var audio = null;
 var timerId = null;
@@ -140,11 +149,19 @@ function noteById(id) {
 function pickInstrument() {
   return INSTRUMENTS[Math.floor(Math.random() * INSTRUMENTS.length)];
 }
+// Un instrument sauvegarde n'est garde que s'il est encore actif (reprise d'une
+// ancienne partie « violon » apres bascule en piano seul, par exemple).
+function normalizeInstrument(id) {
+  for (var i = 0; i < INSTRUMENTS.length; i++) {
+    if (INSTRUMENTS[i] === id) { return id; }
+  }
+  return INSTRUMENTS[0];
+}
 function fileFor(note) {
   var f = note.fichiers && note.fichiers[state.instrument];
   return f || (note.fichiers && note.fichiers[INSTRUMENTS[0]]) || note.fichier || '';
 }
-function updateIcone() { violonEl.textContent = ICONE[state.instrument] || ICONE.violon; }
+function updateIcone() { violonEl.textContent = ICONE[state.instrument] || ICONE[INSTRUMENTS[0]] || '🎹'; }
 function formatScore(n) { return (Math.round(n * 2) / 2).toString().replace('.', ','); }
 function setFeedback(txt, cls) {
   feedbackEl.textContent = txt || '';
@@ -284,7 +301,7 @@ function showScreen(name) {
 // ---------------------------------------------------------------------------
 function newGame() {
   clearGame();
-  state = { phase: 'jeu', attempt: 0, score: 0, tries: 0, current: null, lastId: null, instrument: 'violon', accept: false };
+  state = { phase: 'jeu', attempt: 0, score: 0, tries: 0, current: null, lastId: null, instrument: INSTRUMENTS[0], accept: false };
   showScreen('jeu');
   updateHud();
   resetTouches();
@@ -385,7 +402,7 @@ function finish(win) {
     finTitreEl.textContent = 'Bravo !';
     finDetailEl.textContent = 'Tu as ' + formatScore(state.score) + ' points en ' + state.attempt + ' essais.';
   } else {
-    finEmojiEl.textContent = '🎻';
+    finEmojiEl.textContent = '🎹';
     finTitreEl.textContent = 'Tu as fait ' + formatScore(state.score) + ' points';
     finDetailEl.textContent = 'En ' + state.attempt + ' essais. Réessaie pour gagner !';
   }
@@ -399,7 +416,7 @@ function resumeGame(g) {
   state.attempt = g.attempt || 1;
   state.score = g.score || 0;
   state.lastId = g.lastId || null;
-  state.instrument = g.instrument || 'violon';
+  state.instrument = normalizeInstrument(g.instrument);
   state.tries = 0;
   state.accept = true;
   state.current = noteById(g.lastId);

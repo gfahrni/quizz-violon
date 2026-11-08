@@ -12,8 +12,13 @@ d'un sampler. Chaque note devient un fichier mp3 autonome, court (~3 s), mono,
 normalise et versionnable.
 
 Le violon est echantillonne toutes les 1-2 notes (G3 A3 C4 E4 G4 A4 C5 E5),
-le piano tous les 4 demi-tons (F3 A3 C#4 F4 A4 C#5 F5 dans notre ambitus).
+le piano tous les 4 demi-tons (F3 A3 C#4 F4 A4 C#5 F5 A5 C#6 dans notre ambitus).
 Decalage maximal applique : 2 demi-tons montants, 1/2 descendant.
+
+Reglage actuel : piano seul, ambitus G3 -> C6. Le plan violon est conserve pour
+memoire (mode desactive) : ses echantillons VSCO s'arretent a E5, il ne couvre
+donc pas F5..C6. Pour reactiver le violon, remettre "violon" dans notes.json et
+completer son plan (ou restreindre l'ambitus).
 
 Usage :
     python3 generer-notes.py            # telecharge si besoin puis genere
@@ -33,6 +38,8 @@ VSCO = "https://raw.githubusercontent.com/sgossner/VSCO-2-CE/master/"
 # Pour chaque instrument : dossier source VSCO + plan note -> (echantillon, demi-tons)
 INSTRUMENTS = {
     "violon": {
+        # Mode desactive (piano seul) : plan garde pour trace. S'arrete a E5,
+        # hauteur maximale des echantillons Arco Vib de VSCO.
         "base_url": VSCO + "Strings/Solo%20Violin/Arco%20Vib/",
         "plan": {
             "G3":  ("LLVln_ArcoVib_G3_f.wav", 0),
@@ -56,7 +63,7 @@ INSTRUMENTS = {
     "piano": {
         "base_url": VSCO + "Keys/Upright%20Piano/",
         # Echantillons tous les 4 demi-tons : suffixe = (numero de touche - 21) / 2.
-        # F3=016 A3=018 C#4=020 F4=022 A4=024 C#5=026 F5=028.
+        # F3=016 A3=018 C#4=020 F4=022 A4=024 C#5=026 F5=028 A5=030 C#6=032.
         "plan": {
             "G3":  ("Player_dyn3_rr1_016.wav", 2),
             "A3":  ("Player_dyn3_rr1_018.wav", 0),
@@ -74,6 +81,12 @@ INSTRUMENTS = {
             "C#5": ("Player_dyn3_rr1_026.wav", 0),
             "D5":  ("Player_dyn3_rr1_026.wav", 1),
             "E5":  ("Player_dyn3_rr1_028.wav", -1),
+            "F5":  ("Player_dyn3_rr1_028.wav", 0),
+            "F#5": ("Player_dyn3_rr1_028.wav", 1),
+            "G5":  ("Player_dyn3_rr1_028.wav", 2),
+            "A5":  ("Player_dyn3_rr1_030.wav", 0),
+            "B5":  ("Player_dyn3_rr1_030.wav", 2),
+            "C6":  ("Player_dyn3_rr1_032.wav", -1),
         },
     },
 }

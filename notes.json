@@ -2,14 +2,13 @@
   "version": 2,
   "plage": {
     "de": "G3",
-    "a": "E5"
+    "a": "C6"
   },
   "dieseAutorises": [
     "C#",
     "F#"
   ],
   "instruments": [
-    "violon",
     "piano"
   ],
   "notes": [
@@ -187,6 +186,66 @@
       "fichiers": {
         "violon": "audio/violon/E5.mp3",
         "piano": "audio/piano/E5.mp3"
+      }
+    },
+    {
+      "id": "F5",
+      "nom": "Fa",
+      "classe": "F",
+      "octave": 5,
+      "freq": 698.46,
+      "fichiers": {
+        "piano": "audio/piano/F5.mp3"
+      }
+    },
+    {
+      "id": "F#5",
+      "nom": "Fa#",
+      "classe": "F#",
+      "octave": 5,
+      "freq": 739.99,
+      "fichiers": {
+        "piano": "audio/piano/Fs5.mp3"
+      }
+    },
+    {
+      "id": "G5",
+      "nom": "Sol",
+      "classe": "G",
+      "octave": 5,
+      "freq": 783.99,
+      "fichiers": {
+        "piano": "audio/piano/G5.mp3"
+      }
+    },
+    {
+      "id": "A5",
+      "nom": "La",
+      "classe": "A",
+      "octave": 5,
+      "freq": 880.0,
+      "fichiers": {
+        "piano": "audio/piano/A5.mp3"
+      }
+    },
+    {
+      "id": "B5",
+      "nom": "Si",
+      "classe": "B",
+      "octave": 5,
+      "freq": 987.77,
+      "fichiers": {
+        "piano": "audio/piano/B5.mp3"
+      }
+    },
+    {
+      "id": "C6",
+      "nom": "Do",
+      "classe": "C",
+      "octave": 6,
+      "freq": 1046.5,
+      "fichiers": {
+        "piano": "audio/piano/C6.mp3"
       }
     }
   ]

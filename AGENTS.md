@@ -3,7 +3,7 @@
 ## But du projet
 App **« Quizz violon »** pour **Ambre** (joue du violon) sur **iPad mini 4**
 (Safari ancien, max iPadOS 15.x).
-Jeu d'oreille : on lui joue une **note de violon**, elle doit **nommer la note**
+Jeu d'oreille : on lui joue une **note** (au **piano** pour le moment), elle doit **nommer la note**
 (Do, Ré, Mi... sans l'octave). Partie de 10 à 30 essais, objectif **10 points**.
 Thème **rose** (même palette Peach que `missions-soir` / `instruments-check`).
 Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
@@ -11,8 +11,8 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 ## Règles du jeu
 - Bouton **« Nouvelle partie »** sur l'écran d'accueil.
 - Chaque essai :
-  1. Un **instrument** est tiré au hasard : **violon ou piano** (50/50), affiché à
-     l'écran (🎻 / 🎹).
+  1. Un **instrument** est tiré au hasard dans `instruments` (`notes.json`) — **piano
+     seul** actuellement — affiché à l'écran (🎹 ; le violon 🎻 reste câblé).
   2. Une note est tirée au hasard dans la liste autorisée (`notes.json`) et jouée
      avec l'instrument tiré.
   3. La note est **jouée automatiquement 3 s**, et le **chrono de 10 s démarre**
@@ -39,13 +39,16 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
   - Écran défaite : **« Tu as fait X points »** avec bouton **« Rejouer »**.
 
 ## Notes autorisées (source unique : `notes.json`)
-- Plage : **Sol (une octave sous l'octave normale) → Mi (une octave au-dessus)**
-  = **G3 → E5** en notation scientifique (octave « normale » = octave 4).
-  *(Validé)*
+- Plage : **Sol (une octave sous l'octave normale) → Do (deux octaves au-dessus)**
+  = **G3 → C6** en notation scientifique (octave « normale » = octave 4).
+  *(Étendu de E5 à C6 le 2026-11-08, possible grâce au piano seul.)*
 - Dièses autorisés : **Do# (C#)** et **Fa# (F#)** uniquement.
   Pas de La#/Si♭, Ré#/Mi♭, Sol#/La♭.
-- Notes résultantes (16) :
-  `G3, A3, B3, C4, C#4, D4, E4, F4, F#4, G4, A4, B4, C5, C#5, D5, E5`.
+- Notes résultantes (22) :
+  `G3, A3, B3, C4, C#4, D4, E4, F4, F#4, G4, A4, B4, C5, C#5, D5, E5,
+  F5, F#5, G5, A5, B5, C6`.
+  Les 6 notes hautes (F5 → C6) n'ont **pas** de fichier violon (les échantillons
+  VSCO Arco Vib s'arrêtent à E5) : elles sont piano uniquement.
 - **Touches de réponse = classes de hauteur** dérivées de `notes.json` :
   Do, Do#, Ré, Mi, Fa, Fa#, Sol, La, Si (9 touches).
 - Changer la liste des notes = **éditer `notes.json`** (les touches se regénèrent).
@@ -69,18 +72,21 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
     (ex. `C#4` → `Cs4.mp3`).
   - `generer-notes.py` : script local one-shot (ffmpeg) qui télécharge les échantillons
     VSCO de base (`audio-src/<instrument>/`, ignoré par git) et ré-échantillonne
-    (`asetrate`) pour produire les 32 mp3 (16 violon + 16 piano). Vérifie la cohérence
-    avec `notes.json`.
+    (`asetrate`) pour produire les mp3 (**22 piano** aujourd'hui ; 16 violon conservés
+    dans le repo). Vérifie la cohérence avec `notes.json`.
 - État de partie en `localStorage` sous préfixe `violon-v1-` (`violon-v1-game`).
 
 ## Audio — source libre
-- Besoin : **une note tenue par hauteur et par instrument** (16 × 2 fichiers),
-  idéalement **CC0**.
+- Besoin : **une note tenue par hauteur et par instrument**, idéalement **CC0**.
+  Aujourd'hui : 22 notes piano (+ 16 violon dormantes, conservées pour le mode violon).
 - **Décision : VSCO 2 Community Edition** (CC0-1.0, `github.com/sgossner/VSCO-2-CE`).
-  - **Violon** : `Strings/Solo Violin/Arco Vib`, bases `_f` : G3, A3, C4, E4, G4, A4,
-    C5, E5. Les autres notes sont obtenues par décalage de +1/+2 demi-tons.
+  - **Violon** (mode désactivé, plan gardé) : `Strings/Solo Violin/Arco Vib`, bases
+    `_f` : G3, A3, C4, E4, G4, A4, C5, E5. Autres notes par décalage de +1/+2 demi-tons ;
+    ne couvre pas F5 → C6.
   - **Piano** : `Keys/Upright Piano` (Ivy Audio, `dyn3`), bases tous les 4 demi-tons :
-    F3, A3, C#4, F4, A4, C#5, F5. Décalage de −1 à +2 demi-tons.
+    F3, A3, C#4, F4, A4, C#5, F5, A5, C#6. Décalage de −1 à +2 demi-tons.
+    Hauteurs vérifiées (YIN) : ≤ +7 cents sur G3–B5, +16 cents sur C6 (étirement
+    d'octave naturel du piano).
 - Sortie visée : mp3 mono ~96–128 kbps, normalisés, courts (~3 s), commités dans
   `audio/violon/` et `audio/piano/`.
 - **Note** : les échantillons de l'Université d'Iowa sont des **gammes glissées**
@@ -104,7 +110,7 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 - Langue UI : **français**.
 
 ## Décisions prises
-1. **Plage** : G3 → E5 (octave normale = octave 4). **Validé.**
+1. **Plage** : G3 → C6 (octave normale = octave 4). **Validé** (étendu le 2026-11-08).
 2. **2e chance / chrono** : le chrono de 10 s couvre toute la note, 2e chance incluse ;
    la 2e chance ajoute **+5 s** au chrono. **Validé.**
 3. **Réécoute** : maintenir « Réécouter » ne remet pas les 10 s à zéro. **Validé.**
@@ -113,11 +119,20 @@ Déployé sur **GitHub Pages** (repo `gfahrni/quizz-violon`).
 6. Persistance : la partie en cours est sauvegardée et reprise via « Reprendre la partie ».
 7. Étoiles : 5 étoiles, 1 étoile = 2 points, demi-étoile = 1 point.
 8. Plafond d'essais : 30 ; compteur = `points / max(10, essai)`.
-9. **Instrument** : violon ou piano tiré au hasard à chaque essai (50/50), affiché
-   à l'écran (🎻/🎹) ; l'instrument de l'essai en cours est sauvegardé pour la reprise.
+9. **Instrument** : tirage au hasard dans `instruments`, affiché à l'écran (🎻/🎹) ;
+   l'instrument de l'essai en cours est sauvegardé pour la reprise.
+10. **Piano seul** (2026-11-08) : `instruments` = `["piano"]`. Le mode violon reste
+    câblé (icône, plan dans `generer-notes.py`, `audio/violon/*.mp3`, entrées
+    `fichiers.violon`) et se réactive en remettant `"violon"` dans `notes.json`, sur
+    les notes qui ont un fichier violon. Une sauvegarde d'ancienne partie en violon
+    est ramenée au piano à la reprise.
 
 ## Tests
 - Logique de jeu validée par harnais Node (DOM/audio/timers simulés) : 26 cas OK
   (victoire à 10 essais, défaite à 30, demi-points, timeouts, compteur /11, persistance).
 - Instrument : 11 cas OK (tirage 50/50 sur 2000 essais, chemin `audio/<instrument>/`,
   sauvegarde/reprise de l'instrument, repli violon sur ancienne sauvegarde, icône).
+- 2026-11-08 (piano seul, 22 notes) : 58 cas OK — 22 notes en fallback et via
+  `notes.json`, 9 touches, audio toujours `audio/piano/`, reprise d'une sauvegarde
+  violon ramenée au piano, compteurs /10 → /11 → /30, victoire à 10, défaite à 30,
+  hauteurs des 22 mp3 vérifiées (YIN, ≤ 25 cents).
